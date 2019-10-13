@@ -13,6 +13,16 @@
 /* Step 4: Pass the data received from Github into your function, 
            create a new component and add it to the DOM as a child of .cards
 */
+axios
+  .get("https://api.github.com/users/clay-most")
+  .then(response => {
+    const cards = document.querySelector(".cards");
+    const newCard = CardCreator(response.data);
+    cards.appendChild(newCard);
+  })
+  .catch(error => {
+    console.log("error", error);
+  });
 
 /* Step 5: Now that you have your own card getting added to the DOM, either 
           follow this link in your browser https://api.github.com/users/<Your github name>/followers 
@@ -24,7 +34,26 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell"
+];
+
+followersArray.forEach(instructor => {
+  axios
+    .get(`https://api.github.com/users/${instructor}`)
+    .then(response => {
+      const cards = document.querySelector(".cards");
+      const newCard = CardCreator(response.data);
+      cards.appendChild(newCard);
+    })
+    .catch(error => {
+      console.log("error", error);
+    });
+});
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -43,8 +72,68 @@ const followersArray = [];
     <p>Bio: {users bio}</p>
   </div>
 </div>
-
 */
+
+//Card maker function that takes in a single object//
+function CardCreator(user) {
+  //container div//
+  const card = document.createElement("div");
+  card.classList.add("card");
+
+  //user image created with source and appeneded to card div//
+  const userImg = document.createElement("img");
+  userImg.src = `${user.avatar_url}`;
+  card.appendChild(userImg);
+
+  //info div classed and appended to main card div//
+  const infoDiv = document.createElement("div");
+  infoDiv.classList.add("card-info");
+  card.appendChild(infoDiv);
+
+  //name//
+  const name = document.createElement("h3");
+  name.classList.add("name");
+  name.textContent = `${user.name}`;
+  infoDiv.appendChild(name);
+
+  //username//
+  const username = document.createElement("p");
+  username.classList.add("username");
+  username.textContent = `${user.login}`;
+  infoDiv.appendChild(username);
+
+  //location//
+  const location = document.createElement("p");
+  location.textContent = `Location: ${user.location}`;
+  infoDiv.appendChild(location);
+
+  //profile and link//
+  const profile = document.createElement("p");
+  profile.textContent = "Profile:";
+  infoDiv.appendChild(profile);
+
+  const profileLink = document.createElement("a");
+  profileLink.href = `${user.html_url}`;
+  profileLink.textContent = `${user.html_url}`;
+  profile.appendChild(profileLink);
+
+  //followers//
+  const followers = document.createElement("p");
+  followers.textContent = `Followers: ${user.followers}`;
+  infoDiv.appendChild(followers);
+
+  //following//
+  const following = document.createElement("p");
+  following.textContent = `Following: ${user.following}`;
+  infoDiv.appendChild(following);
+
+  //bio//
+  const bio = document.createElement("p");
+  bio.textContent = `Bio: ${user.bio}`;
+  infoDiv.appendChild(bio);
+
+  return card;
+}
 
 /* List of LS Instructors Github username's: 
   tetondan
